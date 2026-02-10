@@ -14,7 +14,7 @@ zabbix_export:
           name: 'RBL Check'
           type: HTTP_AGENT
           key: generator.rbl.check
-          url: 'https://api.generatorlabs.com/4.0/rbl/listings.zabbix'
+          url: 'https://api.generatorlabs.com/4.0/rbl/listings/count'
           authtype: BASIC
           username: '{$GENERATOR_ACCOUNT_SID}'
           password: '{$GENERATOR_API_TOKEN}'
@@ -30,7 +30,7 @@ zabbix_export:
           name: 'Certificate Check'
           type: HTTP_AGENT
           key: generator.cert.check
-          url: 'https://api.generatorlabs.com/4.0/cert/errors.zabbix'
+          url: 'https://api.generatorlabs.com/4.0/cert/errors/count'
           authtype: BASIC
           username: '{$GENERATOR_ACCOUNT_SID}'
           password: '{$GENERATOR_API_TOKEN}'

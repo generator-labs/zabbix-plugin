@@ -1,0 +1,85 @@
+zabbix_export:
+  version: '7.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: a3e1f8b204c74d5e9617d2a8c9b0e4f6
+      template: 'Generator Labs'
+      name: 'Generator Labs'
+      groups:
+        - name: Templates
+      items:
+        - uuid: b4f20c9315d85e6fa728e3b9d0c1f507
+          name: 'RBL Check'
+          type: HTTP_AGENT
+          key: generator.rbl.check
+          url: 'https://api.generatorlabs.com/4.0/rbl/listings.zabbix'
+          authtype: BASIC
+          username: '{$GENERATOR_ACCOUNT_SID}'
+          password: '{$GENERATOR_API_TOKEN}'
+          delay: 5m
+          history: 90d
+          trends: 365d
+          value_type: FLOAT
+          timeout: 30s
+          tags:
+            - tag: component
+              value: rbl
+        - uuid: c5032da426e96f70b839f4cae1d20618
+          name: 'Certificate Check'
+          type: HTTP_AGENT
+          key: generator.cert.check
+          url: 'https://api.generatorlabs.com/4.0/cert/errors.zabbix'
+          authtype: BASIC
+          username: '{$GENERATOR_ACCOUNT_SID}'
+          password: '{$GENERATOR_API_TOKEN}'
+          delay: 5m
+          history: 90d
+          trends: 365d
+          value_type: FLOAT
+          timeout: 30s
+          tags:
+            - tag: component
+              value: cert
+      triggers:
+        - uuid: d6143eb537fa0781c94a05dbf2e31729
+          expression: 'last(/Generator Labs/generator.rbl.check)>0'
+          name: 'Generator Labs RBL Check - Listed'
+          priority: HIGH
+        - uuid: e7254fc6480b1892da5b16ecf3f4283a
+          expression: 'last(/Generator Labs/generator.rbl.check)=-1'
+          name: 'Generator Labs RBL Check - Unknown'
+          priority: WARNING
+        - uuid: f8365a0d7591c2a3eb6c270de4053b4b
+          expression: 'last(/Generator Labs/generator.cert.check)>0'
+          name: 'Generator Labs Certificate Check - Errors'
+          priority: HIGH
+        - uuid: 09476b1e86a2d3b4fc7d381ef516ac5c
+          expression: 'last(/Generator Labs/generator.cert.check)=-1'
+          name: 'Generator Labs Certificate Check - Unknown'
+          priority: WARNING
+      macros:
+        - macro: '{$GENERATOR_ACCOUNT_SID}'
+          description: 'Generator Labs account SID from the portal'
+        - macro: '{$GENERATOR_API_TOKEN}'
+          type: SECRET
+          description: 'Generator Labs API auth token from the portal'
+      tags:
+        - tag: class
+          value: monitoring
+  graphs:
+    - uuid: 1a587c2f97b3e4c50d8e492f06270d6d
+      name: 'Generator Labs RBL Results'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Generator Labs'
+            key: generator.rbl.check
+    - uuid: 2b698d30a8c4f5d61e9f5a3017381e7e
+      name: 'Generator Labs Certificate Results'
+      graph_items:
+        - color: 00C800
+          item:
+            host: 'Generator Labs'
+            key: generator.cert.check

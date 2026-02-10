@@ -1,43 +1,29 @@
-<a href="https://rbltracker.com" target="_blank">
-    <picture>
-        <source media="(prefers-color-scheme: dark)" srcset="https://portal.rbltracker.com/assets/3.14/images/rbltracker_logo_dark.svg" width="400">
-        <img src="https://portal.rbltracker.com/assets/3.14/images/rbltracker_logo_light.svg" width="400">
-    </picture>
-</a>
+# Generator Labs - Zabbix Plugin
 
-[Sign up][rbltracker sign up] for a RBLTracker account and visit our [developer site][rbltracker dev site] for even more details.
+A Zabbix template that integrates with the Generator Labs public API using native HTTP Agent items. No external scripts are required — Zabbix makes the API requests directly.
 
-# RBLTracker Zabbix Plugin
+Generator Labs currently supports the following monitoring products:
 
-This is a very simple Zabbix plugin, written in bash, to integrate with the RBLTracker public API. This tool uses the command line `curl` tool to make an HTTPs GET request to a specific Zabbix formatted API URL.
+* **RBL Monitoring** — monitors IP/domain blacklist status
+* **Certificate Monitoring** — monitors SSL/TLS certificate errors
 
-This script returns:
+The template returns:
 
-* 0 when the "total_listed" value is 0.
-* &gt; 0 when the "total_listed" value does not equal 0.
+* 0 when no issues are detected.
+* &gt; 0 when issues are detected.
 * -1 when there is some other error, like an invalid API token.
 
+## Requirements
+
+* Zabbix Server 7.0 or later
+* HTTPS connectivity from the Zabbix Server to `api.generatorlabs.com`
 
 ## Installation
 
-1. Copy `check_rbltracker.sh` into your Zabbix plugins directory; this is most likely `<zabbix dir>/share/zabbix/externalscripts` depending on your platform.
-```
-cp check_rbltracker.sh /usr/share/zabbix/externalscripts/
-```
+1. Import the `generator_zabbix.yaml` file into your Zabbix instance via **Configuration > Templates > Import**.
 
-2. Make sure `check_rbltracker.sh` is executable:
-```
-chmod +x check_rbltracker.sh
-```
+2. Edit an existing Host, or add a new Host, and from the Templates tab, link the "Generator Labs" template to this host.
 
-## Zabbix Configuration
+3. From the Macros tab, set the values for `{$GENERATOR_ACCOUNT_SID}` and `{$GENERATOR_API_TOKEN}`. These are your Generator Labs account SID and API auth token, available from the Generator Labs portal @ https://portal.generatorlabs.com/
 
-1. Import the `rbltracker_zabbix.xml` file, which imports the "RBLTracker Check" template into your Zabbix instance.
-
-2. Edit an existing Host, or add a new Host, and from the Templates tab, link the new "RBLTracker Check" template to this host.
-
-3. From the Macros tab, add a new `{$RBLTRACKER_ACCOUNT_SID}` and `{$RBLTRACKER_API_TOKEN}` Macros; the value for the Macros are your RBLTracker account SID and API token, available from the RBLTracker portal.
-
-
-[rbltracker sign up]:   https://portal.rbltracker.com/signup/
-[rbltracker dev site]:  https://rbltracker.com/docs/api/
+The template includes items, triggers, and graphs for both RBL and Certificate monitoring. The API token macro is configured as a secret type so the value is masked in the Zabbix UI.

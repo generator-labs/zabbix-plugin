@@ -7,6 +7,9 @@ zabbix_export:
     - uuid: a3e1f8b204c74d5e9617d2a8c9b0e4f6
       template: 'Generator Labs'
       name: 'Generator Labs'
+      vendor:
+        name: 'Generator Labs'
+        version: '7.0-1.0.1'
       groups:
         - name: Templates
       items:
@@ -23,6 +26,11 @@ zabbix_export:
           trends: 365d
           value_type: FLOAT
           timeout: 30s
+          status_codes: '200,400-599'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'var v = parseFloat(value); return isNaN(v) ? -1 : v;'
           tags:
             - tag: component
               value: rbl
@@ -39,6 +47,11 @@ zabbix_export:
           trends: 365d
           value_type: FLOAT
           timeout: 30s
+          status_codes: '200,400-599'
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'var v = parseFloat(value); return isNaN(v) ? -1 : v;'
           tags:
             - tag: component
               value: cert
